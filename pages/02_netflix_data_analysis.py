@@ -67,6 +67,11 @@ title_lengths=[]
 for title in movies_df["title"]:
     title_lengths.append(len(title))
 
+avg_title_length = sum(title_lengths) / len(title_lengths)
+
+for title in movies_df["title"]:
+    title_lengths.append(len(title))
+
 avg_title_length = sum(title_lengths) / len(title_lengths) 
 
 # ----- Displaying the extracted information metrics -----
@@ -92,7 +97,7 @@ year = cols2[0].number_input("Select a year:", min_year, max_year, 2005)
 
 # TODO: Ex 2.6: For a given year, get the Pandas Series of how many movies and series 
 # combined were made by every country, limit it to the top 10 countries.
-top_10_countries = None
+top_10_countries = = movies_df.loc[movies_df["release_year"] == year, "country"].value_counts().head(10)
 
 # print(top_10_countries)
 if top_10_countries is not None:
@@ -113,6 +118,19 @@ st.header("Avg Duration of Movies by Year")
 
 # TODO: Ex 2.7: Make a line chart of the average duration of movies (not TV shows) in minutes for every year across all the years. 
 movies_avg_duration_per_year = None
+movies_only = movies_df[movies_df["type"] == "Movie"]
+
+duration_minutes = []
+
+for value in movies_only["duration"]:
+    duration_minutes.append(int(value.replace(" min", "")))
+
+movies_only = movies_only.copy()
+movies_only["duration_minutes"] = duration_minutes
+
+movies_avg_duration_per_year = movies_only.groupby("release_year")["duration_minutes"].mean()
+
+fig = plt.figure(figsize=(9, 6))
 
 if movies_avg_duration_per_year is not None:
     fig = plt.figure(figsize=(9, 6))
@@ -122,7 +140,6 @@ if movies_avg_duration_per_year is not None:
     plt.title("Average Duration of Movies Across Years")
 
     st.pyplot(fig)
-
 else:
     st.subheader("⚠️ You still need to develop the Ex 2.7.")
 
